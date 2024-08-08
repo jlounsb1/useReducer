@@ -1,30 +1,25 @@
 import { useReducer } from "react";
 import './App.css'
 
-
 function reducer(state, action){
   switch(action.type) {
-    case 'completed': {
-      return state.completed =true;
+    case "completed" : {
+      // let newState = ...state
+      return {
+      ...state,
+      completed:true
+      }
     }
-    default: {
-      throw Error("unknown Action: " + action.type)
+    default :{
+      throw Error('unknown action')
     }
   }
-}
-
-function CompleteItem({children, dispatch, type, payload}) {
-return (
-  <button onClick={()=> dispatch({type:type, payload:payload})}>
-    {children}
-  </button>
-)
 }
 
 function App() {
   const [toDos, dispatch]=useReducer(reducer, initialState)
   
-  
+
 
 return (
   <>
@@ -36,9 +31,7 @@ return (
         <li><b>To Do Number: </b>{item.id}</li>
         <li><b>To Do Item: </b>{item.title}</li>
         <li><b>Completed: </b>{item.completed? 'True':'False'}</li>
-        <CompleteItem type='completed' dispatch={dispatch}>
-          Mark as Done
-        </CompleteItem>
+        <ActionButton type='completed' dispatch={dispatch} />
         <br />
         <br />
         </div>
@@ -51,6 +44,13 @@ return (
 
 export default App
 
+function ActionButton({type, dispatch}) {
+  return(
+    <button onClick={() => dispatch({type:type})}>
+      Completed
+    </button>
+  )
+}
 
 const initialState = [
   {
