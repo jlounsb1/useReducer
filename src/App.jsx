@@ -1,56 +1,128 @@
 import { useReducer } from "react";
 import './App.css'
+import AddTask from './AddTask.jsx'
+import TaskList from './TaskList.jsx'
 
-function reducer(state, action){
+function tasksReducer(tasks,action) {
   switch(action.type) {
-    case "completed" : {
-      // let newState = ...state
-      return {
-      ...state,
-      completed:true
-      }
+    case 'add':{
+      return [...tasks, {
+        userId:1,
+        id:action.id,
+        title:action.title,
+        completed: action.completed
+      }]
     }
-    default :{
-      throw Error('unknown action')
+    case 'changed': {
+      return tasks.map(t => {
+        if (t.id === action.task.id) {
+          return action.task;
+        } else {
+          return t;
+        }
+      });
+    }
+    case 'deleted':{
+      return tasks.filter(t=>t.id !==action.id)
+    }
+    default: {
+      throw error('Unknown action: ' + action.type)
     }
   }
 }
 
-function App() {
-  const [toDos, dispatch]=useReducer(reducer, initialState)
-  
+export default function App() {
+  const [tasks, dispatch]=useReducer(
+    tasksReducer,
+    initialState
+  )
 
+  function handleAddTask(title) {
+    dispatch({
+      type: 'add',
+      id:NextId++,
+      title:title
+    })
+  }
 
-return (
-  <>
-  <h1>To Do's:</h1>
-  <ul style={{listStyleType:'none'}}>
-    {toDos.map((item)=> {
-      return(
-        <div key={item.id}>
-        <li><b>To Do Number: </b>{item.id}</li>
-        <li><b>To Do Item: </b>{item.title}</li>
-        <li><b>Completed: </b>{item.completed? 'True':'False'}</li>
-        <ActionButton type='completed' dispatch={dispatch} />
-        <br />
-        <br />
-        </div>
-      )
-    })}
-    </ul>
-  </>
-)
-}
+  function handleChangeTask(task) {
+    dispatch({
+      type: 'changed',
+      task: task
+    });
+  }
+  function handleDeleteTask(id) {
+    dispatch({
+      type:'deleted',
+      id:id,
+    })
+  }
 
-export default App
-
-function ActionButton({type, dispatch}) {
   return(
-    <button onClick={() => dispatch({type:type})}>
-      Completed
-    </button>
+    <>
+    <h1>To Do app</h1>
+    <AddTask 
+      onAddTask={handleAddTask}
+    />
+    <TaskList 
+      tasks={tasks}
+      onChangeTask={handleChangeTask}
+      onDeleteTask={handleDeleteTask}
+    />
+    </>
   )
 }
+
+// function reducer(state, action){
+//   switch(action.type) {
+//     case "completed" : {
+//       return {
+//       ...state,
+//       completed:true
+//       }
+//     }
+//     default :{
+//       throw Error('unknown action')
+//     }
+//   }
+// }
+
+// function App() {
+//   const [toDos, dispatch]=useReducer(reducer, initialState)
+  
+// console.log(toDos)
+
+// return (
+//   <>
+//   <h1>To Do's:</h1>
+//   <ul style={{listStyleType:'none'}}>
+//     {toDos?.map((item)=> {
+//       return(
+//         <div key={item.id}>
+//         <li><b>To Do Number: </b>{item.id}</li>
+//         <li><b>To Do Item: </b>{item.title}</li>
+//         <li><b>Completed: </b>{item.completed? 'True':'False'}</li>
+//         <ActionButton type='completed' dispatch={dispatch} />
+//         <br />
+//         <br />
+//         </div>
+//       )
+//     })}
+//     </ul>
+//   </>
+// )
+// }
+
+// export default App
+
+// function ActionButton({type, dispatch}) {
+//   return(
+//     <button onClick={() => dispatch({type:type})}>
+//       Completed
+//     </button>
+//   )
+// }
+
 
 const initialState = [
   {
@@ -174,3 +246,5 @@ const initialState = [
     "completed": true
   }
 ];
+
+let NextId=Number(initialState.length)
