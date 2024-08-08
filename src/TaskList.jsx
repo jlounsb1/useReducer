@@ -49,22 +49,45 @@ function Task({ task, onChange, onDelete }) {
       </>
     );
   }
-  return (
-    <label>
-      <input
-        type="checkbox"
-        checked={task.done}
-        onChange={e => {
-          onChange({
-            ...task,
-            done: e.target.checked
-          });
-        }}
-      />
-      {taskContent}
-      <button onClick={() => onDelete(task.id)}>
-        Delete
-      </button>
-    </label>
-  );
+  if(task.completed){
+    return (
+        <label>
+          <input
+            type="checkbox"
+            checked={task.completed}
+            onChange={e => {
+              onChange({
+                ...task,
+                completed: e.target.checked
+              });
+            }}
+          />
+          {taskContent}
+          <button disabled onClick={() => onDelete(task.id)}>
+            Remove From List
+          </button>
+        </label>
+      );
+  } else{
+    return (
+        <label>
+          <input
+            type="checkbox"
+            checked={task.completed}
+            onChange={e => {
+              onChange({
+                ...task,
+                completed: e.target.checked
+              });
+            }}
+          />
+          {taskContent}
+          <button onClick={() => onDelete(task.id)}>
+            Remove From List
+          </button>
+        </label>
+      );
+  }
+
+  
 }
